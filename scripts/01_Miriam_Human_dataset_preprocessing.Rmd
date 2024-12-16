@@ -445,29 +445,6 @@ if(long.compute){
 ```
 
 
-### Quick run of standard pipeline
-```{r standard_pipeline}
-
-if(long.compute){
-
-    
-seurat.human <- SeuratExtend::RunBasicSeurat(seurat.human,
-                                             spe = "human",
-                                             nFeature_RNA.min = feature.low,
-                                             nFeature_RNA.max = feature.high,
-                                             percent.mt.max = mito.high, 
-                                             dims = 1:10, 
-                                             resolution = 0.5)
-1?debug
-
-DimPlot2(pbmc, group.by = "cluster")
-
-
-}
-
-
-```
-
 ## Normalise & integrate GEX data
 ```{r Normalise_and_integrate_GEX_data}
 
@@ -646,8 +623,6 @@ colSums(x)
 ```
 
 
-
-
 ### Save seurat object
 ```{r save_seurat_object}
 
@@ -659,227 +634,15 @@ if(long.compute){
   write.csv(seurat.human@meta.data, "saves/metadata.csv")
 }else{
   
-  seurat.human <- LoadSeuratRds("savesseurat.human.rds")
+  seurat.human <- LoadSeuratRds("saves/seurat.human.rds")
 }
 
 ```
-
-
-## Annotate clusters {.tabset}
-
-### Differential gene expression GEX vs seurat_clusters
-```{r DEG_analysis_seurat_clusters}
-
-# create output dir
-output.dir <- paste0("results/DEG_analysis_seurat_clusters/")
-
-if(!dir.exists(output.dir)){
-  dir.create(output.dir, 
-             recursive = T)
-  
-}
-
-################################################
-# Caclulate GEX DEGs for across seurat_clusters 
-################################################
-
-if(long.compute){
-  
-  # set assay
-  DefaultAssay(seurat.human) <- "SCT"
-  seurat.human <- PrepSCTFindMarkers(seurat.human)
-  
-  # DEG calculation using single-cells
-  
-  # set assay
-  DefaultAssay(seurat.human) <- "SCT"
-  
-  # format cluster annotations
-  seurat.human@meta.data$seurat_clusters <- factor(seurat.human@meta.data$seurat_clusters, levels = c(0:length(unique(seurat.human@meta.data$seurat_clusters))))
-  
-  # set idents
-  Idents(seurat.human) <- "seurat_clusters"
-  
-  seurat_clusters.gex.de <- FindAllMarkers(seurat.human,
-                                           assay = "SCT",
-                                           only.pos = TRUE, 
-                                           verbose = TRUE)
-  
-  # save to file 
-  write.csv(seurat_clusters.gex.de, paste0(output.dir, "DEGs_wilcox_single_cell_SCT_seurat_clusters.csv"))
-  
-}else{
-  
-  seurat_clusters.gex.de <- read.csv(paste0(output.dir, "DEGs_wilcox_single_cell_SCT_seurat_clusters.csv"))
-  
-}
-
-
-
-
-```
-
-
-### DEG heatmaps - GEX and ADT - seurat_clusters
-```{r DEG_heatmaps_seurat_clusters}
-
-# create output dir
-output.dir <- paste0("results/DEG_analysis_seurat_clusters/")
-
-if(!dir.exists(output.dir)){
-  dir.create(output.dir, 
-             recursive = T)
-  
-}
-
-
-if(do.plot){
-  
-  
-  ############
-  # GEX data
-  ############
-  DefaultAssay(seurat.human) <- "SCT"
-  
-  # create pseudobulk for visualisation
-  pseudo.seurat <- AggregateExpression(seurat.human, 
-                                   assays = "SCT",
-                                   return.seurat = TRUE,
-                                   group.by = c("seurat_clusters"))
-  
-  # set idents of pseudobulk object
-  Idents(pseudo.seurat) <- "seurat_clusters"
-  
-  # extract top 10 DEGs per cluster
-  goi <- seurat_clusters.gex.de %>%
-    dplyr::filter(p_val_adj < 0.05) %>%
-    dplyr::group_by(cluster) %>%
-    dplyr::top_n(10, avg_log2FC) %>%
-    dplyr::pull(gene)
-  
-  # heatmap of top 10 degs per cluster
-  DoHeatmap(pseudo.seurat, 
-            features = goi, 
-            draw.lines = FALSE, 
-            raster = FALSE) + NoLegend()
-  
-  dev.copy(pdf, paste0(output.dir, "Heatmaptop_10_DEGs_seurat_clusters_pseudobulk.pdf"))
-  dev.off()
-  
-  
-  # iterate over the top degs for each cluster 
-  cluster.id <- unique(seurat_clusters.gex.de$cluster)
-  for(i in seq_along(cluster.id)){
-    
-    
-    print(cluster.id[i])
-    
-    goi <- seurat_clusters.gex.de %>%
-      dplyr::filter(p_val_adj < 0.05) %>%
-      dplyr::filter(cluster == cluster.id[i]) %>%
-      dplyr::top_n(50, avg_log2FC)
-    
-    goi <- unique(goi)
-    
-    print(
-      DoHeatmap(pseudo.seurat, 
-                features = goi$gene, 
-                draw.lines = FALSE, 
-                raster = FALSE)
-    )
-    
-    dev.copy(pdf, paste0(output.dir, "Heatmaptop_50_DEGs_pseudobulk__seurat_cluster_", cluster.id[i], ".pdf"))
-    dev.off()
-    
-  }
-  
-}
-
-```
-
-
-
-## not written 
-### Key lineage markers
-```{r key_lineage_markers}
-
-# create output dir
-output.dir <- paste0("results/key_lineage_markers/")
-
-if(!dir.exists(output.dir)){
-  dir.create(output.dir, 
-             recursive = T)
-  
-}
-
-goi <- c("CD3E", "CD20", "NCAM1", "FOXP3", "CD8A", "CD8B", "CD4")
-
-DoHeatmap(pseudo.seurat, 
-            features = goi, 
-            draw.lines = FALSE, 
-            raster = FALSE) + NoLegend()
-  
-#dev.copy(pdf, paste0(output.dir, "Heatmaptop_10_DEGs_seurat_clusters_pseudobulk.pdf"))
- # dev.off()
-
-
-
-
-
-
-ggplot2_switch_version(desired_version = "3.4.4")
-
-
-# set up object
-DefaultAssay(HL.seurat) <- "ADT"
-
-goi <- rownames(HL.seurat@assays$ADT)
-
-
-# Plot Feature and Density plots iteratively over goi 
-for(i in seq_along(goi)){
-  
-  # feature plots
-  print(
-    scCustomize::FeaturePlot_scCustom(HL.seurat, 
-                                      reduction = "wnn.umap", 
-                                      features = goi[i])
-    
-  )
-  
-  dev.copy(pdf, paste0(output.dir, "UMAP_featureplot_", goi[i], ".pdf"))
-  dev.off()
-  
-  
-  # density plots
-  
-  print(
-    scCustomize::Plot_Density_Custom(HL.seurat, 
-                                     reduction = "wnn.umap",
-                                     features = goi[i], 
-                                     custom_palette = batlow.pal)
-  )
-  dev.copy(pdf, paste0(output.dir, "UMAP_DensityPlot_", goi[i], ".pdf"))
-  dev.off()
-  
-  
-  
-}
-
-
-ggplot2_switch_version(desired_version = "3.5.0")
-
-
-```
-
 
 
 
 
 ## Below code kept for reference purposes
-
-
-
 
 ## Doublet detection {.tabset}
 
@@ -1075,7 +838,6 @@ if(long.compute){
 
 
 ```
-
 
 ### Save seurat object
 ```{r save_seurat_object}
