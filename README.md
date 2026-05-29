@@ -1,51 +1,58 @@
-# TEMP TITLE
+# Miriam Senescence — Human Dataset
 
 ## Project Summary
 
-Understand the .....
-
-## To-Do
-
--   [ ] Placeholder
+Analysis of human senescence data using single-cell and bulk RNA sequencing.
+Experimental conditions: **Vehicle** (control) vs **Doce** (Docetaxel treatment).
 
 ## Dataset Info
 
--   FILL OUT
-
-    
-## Development Notes
-
--   FILL OUT
+| Dataset | Type | Conditions | Notes |
+|---------|------|------------|-------|
+| scRNAseq | 10x Chromium | Vehicle, Doce | CellRanger output |
+| bulkRNAseq | — | — | TBD |
 
 ## File Structure
 
-The repository contains the following top-level directories:
+```
+.
+├── data/
+│   ├── scRNAseq/
+│   │   ├── Vehicle/          # CellRanger output — Vehicle condition
+│   │   │   ├── raw_feature_bc_matrix/
+│   │   │   ├── filtered_feature_bc_matrix/
+│   │   │   └── analysis/     # CellRanger clustering/PCA/UMAP/tSNE
+│   │   └── Doce/             # CellRanger output — Docetaxel condition
+│   │       ├── raw_feature_bc_matrix/
+│   │       ├── filtered_feature_bc_matrix/
+│   │       └── analysis/
+│   └── bulkRNAseq/           # Bulk RNAseq data (TBD)
+│
+├── scripts/
+│   ├── scRNAseq/
+│   │   ├── 01_Miriam_Human_dataset_preprocessing.Rmd   # QC, normalisation, integration
+│   │   └── 02_Miriam_Human_dataset_overview.Rmd        # Visualisation, DEG, cell cycle
+│   ├── bulkRNAseq/           # Bulk RNAseq analysis scripts (TBD)
+│   ├── variables/
+│   │   ├── Colour_scheme_variable.R
+│   │   └── Gene_list_human.xlsx
+│   ├── Load_Packages.R       # Shared package loading
+│   └── Setup.R               # Shared environment setup
+│
+├── results/                  # Analysis outputs (gitignored; regenerated from scripts)
+├── saves/                    # Seurat objects and intermediate saves (gitignored)
+└── figures/                  # Reference figures
+```
 
-- **`data/`** _(ignored by Git)_  
-  - Contains output from `cellranger`  
-  - Will be uploaded to Zenodo for accessibility.
+> **Note:** `results/` and `saves/` are gitignored. Large data files are tracked via Git LFS.
+> Seurat objects and CellRanger output will be uploaded to Zenodo.
 
-- **`results/`** _(ignored by Git)_  
-  - Stores processed analysis results.  
-  - Not tracked in version control.
+## Data Availability
 
-- **`saves/`** _(ignored by Git)_  
-  - Contains intermediate objects such as Seurat objects.  
-  - These files will also be uploaded to Zenodo.
+- Raw data: GEO (link TBD)
+- CellRanger output: Zenodo (link TBD)
+- Seurat objects: Zenodo (link TBD)
 
-- **`scripts/`**  
-  - Includes all analysis and processing scripts.
-  - Tracked in version control.
-    - **`01_Preprocessing.Rmd`**
-      - Reads in `cellranger` output and performs the following 
-      - QC, Ambient RNA removal, Doublet detection, Normalisation, Integration, Dim Reduction, cluster calling
+## Author
 
-## Data availability
-
-- Raw Data (Upload to GEO and provide link)  
-- `cellranger` output (upload zenodo link)
-- `seurat.objects` (upload zenodo link)
-
-## Author Information
-
--   [Dillon Corvino](https://github.com/Eomesodermin)
+- [Dillon Corvino](https://github.com/Eomesodermin)

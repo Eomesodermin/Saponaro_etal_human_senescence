@@ -39,7 +39,7 @@ knitr::opts_chunk$set(
 )
 
 knitr::opts_knit$set(
-  root.dir = "../"
+  root.dir = "../../"
 )
 
 # Environment Set up
@@ -56,7 +56,7 @@ library("rstudioapi")
 
 # Set working directory to source file location
 setwd(dirname(getActiveDocumentContext()$path))
-setwd("..")
+setwd("../..")
 
 # Create output directories & load custom functions & colour scheme
 source("scripts/Setup.R", local = knitr::knit_global())
@@ -127,9 +127,9 @@ if(remove.ambient.rna){
   #################################
   # list all directories in data folder
   #################################
-  sequence.runs <- list.dirs(path = "data", recursive = FALSE)
+  sequence.runs <- list.dirs(path = "data/scRNAseq", recursive = FALSE)
   # capture just the folders with the outs/ from run alignment
-  pattern.vec <- c("^data/Doce$", "^data/Vehicle$")
+  pattern.vec <- c("^data/scRNAseq/Doce$", "^data/scRNAseq/Vehicle$")
   sequence.runs <- grep(paste0(pattern.vec, collapse = "|"), sequence.runs, value = T)
   sequence.runs
   
@@ -143,7 +143,7 @@ if(remove.ambient.rna){
     tmpDir <- sequence.runs[i]
     
     # extract sample info
-    run.id <- gsub("data/", "", sequence.runs[i])
+    run.id <- gsub("data/scRNAseq/", "", sequence.runs[i])
 
     # name the output dir
     save.dir.name <- paste0(save.dir, run.id, "_strainedCounts/")
@@ -258,8 +258,8 @@ if(remove.ambient.rna){
 if(long.compute){
   
 # read in filtered matrix data
-      Vehicle <- Seurat::Read10X("data/Vehicle/filtered_feature_bc_matrix")
-      Doce <- Seurat::Read10X("data/Doce/filtered_feature_bc_matrix")
+      Vehicle <- Seurat::Read10X("data/scRNAseq/Vehicle/filtered_feature_bc_matrix")
+      Doce <- Seurat::Read10X("data/scRNAseq/Doce/filtered_feature_bc_matrix")
 
   # create seurat objects
     seurat.vehicle <- CreateSeuratObject(counts = Vehicle,
