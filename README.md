@@ -1,58 +1,15 @@
-# Miriam Senescence — Human Dataset
+# Human therapy-induced senescence — single-cell & bulk RNA-seq
 
-## Project Summary
+Single-cell (10x Chromium) and bulk RNA-seq analysis of **therapy-induced senescence in human
+cells**, comparing **vehicle (control)** vs **docetaxel (Doce)** treatment.
 
-Analysis of human senescence data using single-cell and bulk RNA sequencing.
-Experimental conditions: **Vehicle** (control) vs **Doce** (Docetaxel treatment).
+## Analysis
+- `scripts/scRNAseq/01_..preprocessing.Rmd` — QC, normalisation, clustering, annotation
+- `scripts/scRNAseq/02_..overview.Rmd` — dataset overview and senescence-programme visualisation
 
-## Dataset Info
+## Data
+CellRanger output and processed objects are kept outside version control (available on request /
+archived externally).
 
-| Dataset | Type | Conditions | Notes |
-|---------|------|------------|-------|
-| scRNAseq | 10x Chromium | Vehicle, Doce | CellRanger output |
-| bulkRNAseq | — | — | TBD |
-
-## File Structure
-
-```
-.
-├── data/
-│   ├── scRNAseq/
-│   │   ├── Vehicle/          # CellRanger output — Vehicle condition
-│   │   │   ├── raw_feature_bc_matrix/
-│   │   │   ├── filtered_feature_bc_matrix/
-│   │   │   └── analysis/     # CellRanger clustering/PCA/UMAP/tSNE
-│   │   └── Doce/             # CellRanger output — Docetaxel condition
-│   │       ├── raw_feature_bc_matrix/
-│   │       ├── filtered_feature_bc_matrix/
-│   │       └── analysis/
-│   └── bulkRNAseq/           # Bulk RNAseq data (TBD)
-│
-├── scripts/
-│   ├── scRNAseq/
-│   │   ├── 01_Miriam_Human_dataset_preprocessing.Rmd   # QC, normalisation, integration
-│   │   └── 02_Miriam_Human_dataset_overview.Rmd        # Visualisation, DEG, cell cycle
-│   ├── bulkRNAseq/           # Bulk RNAseq analysis scripts (TBD)
-│   ├── variables/
-│   │   ├── Colour_scheme_variable.R
-│   │   └── Gene_list_human.xlsx
-│   ├── Load_Packages.R       # Shared package loading
-│   └── Setup.R               # Shared environment setup
-│
-├── results/                  # Analysis outputs (gitignored; regenerated from scripts)
-├── saves/                    # Seurat objects and intermediate saves (gitignored)
-└── figures/                  # Reference figures
-```
-
-> **Note:** `results/` and `saves/` are gitignored. Large data files are tracked via Git LFS.
-> Seurat objects and CellRanger output will be uploaded to Zenodo.
-
-## Data Availability
-
-- Raw data: GEO (link TBD)
-- CellRanger output: Zenodo (link TBD)
-- Seurat objects: Zenodo (link TBD)
-
-## Author
-
-- [Dillon Corvino](https://github.com/Eomesodermin)
+---
+Analysis by **Dillon Corvino** · [GitHub](https://github.com/Eomesodermin) · [dilloncorvino.com](https://dilloncorvino.com)
