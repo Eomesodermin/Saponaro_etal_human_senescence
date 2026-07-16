@@ -44,3 +44,5 @@ figures/*
 *.fastq.gz
 *.fq.gz
 *.sam
+data/
+saves/

@@ -10,8 +10,10 @@ cells**, comparing **vehicle (control)** vs **docetaxel (Doce)** treatment.
 - `scripts/scRNAseq/02_..overview.Rmd` — dataset overview and senescence-programme visualisation
 
 ## Data
-CellRanger output and processed objects are kept outside version control (available on request /
-archived externally).
+Processed data (CellRanger feature-barcode matrices, analysis outputs and processed objects) are
+archived on **Zenodo** (restricted access): **[10.5281/zenodo.21395093](https://doi.org/10.5281/zenodo.21395093)**.
+Raw sequencing reads are deposited separately (ENA/GEO). On Zenodo the data are provided as zip
+archives — download all and run `unzip '*.zip'` in one directory to reconstruct the folder tree.
 
 ---
 Analysis by **Dillon Corvino** · [GitHub](https://github.com/Eomesodermin) · [dilloncorvino.com](https://dilloncorvino.com)
